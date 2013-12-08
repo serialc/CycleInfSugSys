@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Cycling infrastructure suggestion system</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+		<script src="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.js"></script>
+		<script src="js/leaflet.draw.js"></script>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.css" />
+		<link rel="stylesheet" href="css/leaflet.draw.css" />
+		<link rel="stylesheet" href="css/brs.css" />
+		<!--[if lte IE 8]>
+		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.ie.css" />
+		<![endif]-->
+	</head>
+	<body>
+		<div id='head'>Cycling infrastructure suggestion system
+			<span id='action_buttons'>
+				<span class='acbut' id='acbut_point' onclick='BRS.set_mode("point");'>Create point feature</span>
+				<span class='acbut' id='acbut_line' onclick='BRS.set_mode("line");'>Create line feature</span>
+				<span class='acbut' id='acbut_poly' onclick='BRS.set_mode("poly");'>Create area feature</span>
+			</span>
+			<span id='zoom_in_text'>[Zoom in to add features]</span>
+		</div>
+		<div id='cont'>
+			<div id="map"></div>
+		</div>
+		<div id='info'>
+			<p>Info</p>
+		</div>
+
+	 
+<script type="text/javascript">
+			 
+// create the global object holding everything for BRS
+BRS = {mode: 'map',
+		features: []};
+
+// display base map and markers
+BRS.init = function() {
+	// define variables
+	var bounds = new L.LatLngBounds(new L.LatLng(49.56107, 6.06943), new L.LatLng(49.6554, 6.20316)), // sw corner, ne corner
+		osm_path = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+		osm_attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+		osm = new L.TileLayer(osm_path, {minZoom: 12, attribution: osm_attribution});
+		ocm_path = 'http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png',
+		ocm_attribution = '&copy <a href="http://www.opencyclemap.org/">OpenCycleMap</a>, map data &copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+		ocm = new L.TileLayer(ocm_path, {minZoom: 12, attribution: ocm_attribution});
+
+	// create the map
+	BRS.map = L.map('map', {
+		center: bounds.getCenter(),
+		zoom: 12,
+		layers: [ocm, osm],
+		maxBounds: bounds
+	})
+
+	var baseMaps = {
+		"Open Cycle Map": ocm,
+		"Open Street Map": osm
+	};
+
+	// add basemaps to map
+	L.control.layers(baseMaps).addTo(BRS.map);
+
+	// create a generic empty popup item that we populate later
+	BRS.popup = L.popup();
+
+	// only allow editing at zoomed in level
+	BRS.map.on('zoomend', BRS.zoomLock);
+
+	// create event handlers shape creations
+	BRS.map.on('draw:created', function(e) {
+			var type = e.layerType,
+				coords;
+
+			if ( type === 'marker' ) {
+				coords = e.layer.getLatLng();
+				BRS.shape = L.marker(coords).addTo(BRS.map);
+				centre = coords;
+			}
+
+			if ( type === 'polyline' ) {
+				coords = e.layer.getLatLngs();
+				BRS.shape = L.polyline(coords).addTo(BRS.map);
+				centre = BRS.shape.getBounds().getCenter()
+			}
+
+			if ( type === 'polygon' ) {
+				coords = e.layer.getLatLngs();
+				BRS.shape = L.polygon(coords).addTo(BRS.map);
+				centre = BRS.shape.getBounds().getCenter()
+			}
+
+			shape_id = BRS.coords_to_string(centre, '_');
+			str_coords = BRS.coords_to_string(coords, ',');
+
+			html_form = "<h3>Describe the issue located here</h3>" +
+				"<form>" +
+				"<p>Your name: <input id='sug_name' class='ialign' type='text'/></p>" +
+				"<div style='height: 5em;'><p>Comment: <textarea id='sug_com' class='ialign' type='text'></textarea></p></div>" +
+				"<p>Type: <select id='sug_type' class='ialign'><option value='infr'>Infrastructure related</option><option value='maint'>Maintenance</option><option value='near'>Near-miss accident</option><option value='safe'>Safety related</option></select>" + 
+				"<p id='warn'></p>" +
+				"<p><input id='sug_feature' type='hidden' value='" + type + "'><input type='button' class='ialign' value='Submit suggestion' onclick='BRS.comment(\"" + shape_id + "\", \"" + str_coords + "\")'/></p>" +
+		"</form>";
+
+			// put window at center for info
+			//L.popup().setLatLng(centre).setContent("I am a standalone popup.").openOn(BRS.map);
+			BRS.shape.bindPopup(html_form).openPopup();
+
+			// focus on the first field of the form
+			$('#sug_name').focus();
+
+			// turn off the feature button, need to click it again to create a new shape
+			BRS.set_mode('map');
+		}
+	);
+
+	// load data
+	BRS.get_list();
+};
+
+// button clicks determine the mode
+BRS.set_mode = function(m) {
+	// remove the active styling of both buttons
+	$('#acbut_point').removeClass('button_active');
+	$('#acbut_line').removeClass('button_active');
+	$('#acbut_poly').removeClass('button_active');
+
+	// if the user turned off the button, go back to map mode
+	if ( m === BRS.mode || m === 'map' ) {
+		BRS.mode = 'map';
+		$('#map').css('cursor', '');
+		return;
+	}
+
+	// remove any existing, unfinished shapes
+	if ( BRS.shape ) {
+		BRS.map.removeLayer(BRS.shape);
+	}
+
+	// user turned on a button
+	BRS.mode = m;
+	$('#acbut_' + m).addClass('button_active');
+	$('#map').css('cursor', 'crosshair');
+
+	// initialize drawing mode of appropriate type
+	if ( m === 'point') {
+		new L.Draw.Marker(BRS.map,
+			{ allowIntersection: false,
+			showArea: true,
+			drawError: { color: '#b00b00', timeout: 1000 },
+			shapeOptions: { color: 'blue', weight: 8 } } ).enable();
+	}
+	if ( m === 'line' ) {
+		new L.Draw.Polyline(BRS.map,
+			{ //allowIntersection: false,
+			showArea: true,
+			drawError: { color: '#b00b00', timeout: 1000 },
+			shapeOptions: { color: 'blue', weight: 8 } } ).enable();
+	}
+	if ( m === 'poly' ) {
+		new L.Draw.Polygon(BRS.map, 
+			{ //allowIntersection: false,
+			showArea: true,
+			drawError: { color: '#b00b00', timeout: 1000 },
+			shapeOptions: { color: 'blue', weight: 8 } } ).enable();
+	}
+};
+
+// ajax load list of data
+BRS.get_list = function() {
+	var comments_array, com, support_comments, cmts_string, support, coords, llarray, type, title, support_form;
+
+	// get list of suggested locations
+	$.ajax({
+		url: "pinc/list_coms.php",
+		success: function( data ) {
+
+			// convert string to JSON object
+			jdata = jQuery.parseJSON(data);
+
+			// copy to global object
+			BRS.data = jdata;
+
+
+			// iterate through comments
+			for ( com in jdata['cycling_comments'] ) {
+
+				// overwrite index with object
+				com = jdata['cycling_comments'][com];
+				cmts_array = com.support_comments;
+				cmts_string = ''
+
+				// if there are comments build a text string of them
+				if ( cmts_array.length > 0 ) {
+					// Build window components
+					cmts_string = '<h4>Additional comments:</h4>';
+
+					// iterate through comments
+					for ( support in cmts_array ) {
+						// overwrite index with object
+						support = cmts_array[support];
+
+						// build string of comments
+						cmts_string += "<b>" + support.name + "</b> \"" + support.com + "\"<br>\n";
+					}
+				}
+
+				switch ( com['com_type'] ) {
+					case 'near':
+						type = 'Near-miss accident';
+						break;
+					case 'maint':
+						type = 'Maintenance needed';
+						break;
+					case 'infr':
+						type = 'Infrastructure related';
+						break;
+					case 'safe':
+						type = 'Safety related';
+						break;
+				}
+
+				// build html
+				title = '<h3>' + type + " <img onclick=\"$('#support_form').show()\" src='imgs/thumbup.png' title='Suport this statement and add a comment'></h3>\n";
+				title += '<p><strong>' + com['name'] + '</strong>: ' + com['com'] + '</p>';
+
+				// build the form for comments/votes
+				support_form = "<div id='support_form' style='display:none'>" +
+					"<h3>Add a supportive comment</h3>" +
+					"<form>" +
+						"<p>Your name: <input id='sup_name' class='ialign' type='text'/></p>" +
+						"<div style='height: 5em;'><p>Comment: <textarea id='sup_com' class='ialign' type='text'></textarea></p></div>" +
+						"<p id='warn'></p>" +
+						"<p><input type='button' class='ialign' value='Submit comment' onclick='BRS.support(\"" + com['id'] + "\")'/></p>" +
+					"</form>" +
+					"</div>";
+
+				// get coords and convert to latLng objects
+				coords = com['coords'].split(' ');
+				llarray = [];
+				for ( c in coords ) {
+					llarray.push(L.latLng(coords[c].split(',')));
+				}
+
+				// add the markers/polyline/polygon
+				if ( com['feature'] === 'marker' ) {
+					BRS.features.push(L.marker(coords[0].split(',')).bindPopup(title + cmts_string + support_form).addTo(BRS.map));
+				}
+				if ( com['feature'] === 'polyline' ) {
+					BRS.features.push(L.polyline(llarray, {weight: 8}).bindPopup(title + cmts_string).addTo(BRS.map));
+				}
+				if ( com['feature'] === 'polygon' ) {
+					BRS.features.push(L.polygon(llarray, {weight: 8}).bindPopup(title + cmts_string).addTo(BRS.map));
+				}
+			}
+		}
+	});
+};
+
+// remove all features from the list
+BRS.remove_features = function() {
+	for ( f in BRS.features ) {
+		BRS.map.removeLayer(BRS.features[f]);
+	}
+}
+
+// add additional details to an existing comment
+BRS.voteUp = function( elem, id ) {
+
+
+	 console.log(id);
+	
+
+};
+
+// someone is submitting a new infr/maint/ect... feature form
+BRS.comment = function( latlng_id, coordinates ) {
+
+	// send data
+	$.ajax({
+		url: "pinc/sub_com.php",
+		data: {
+			name: $('#sug_name').val(),
+			comment: $('#sug_com').val(),
+			comment_type: $('#sug_type').val(),
+			feature: $('#sug_feature').val(),
+			id: latlng_id,
+			coords: coordinates
+		},
+		success: function( data ) {
+			if ( data == "Success!" ) {
+				// close the popup window
+				BRS.shape.closePopup();
+				//BRS.features.push(BRS.shape);
+				BRS.map.removeLayer(BRS.shape);
+				BRS.remove_features();
+				BRS.get_list();
+			} else {
+				$( "#warn" ).html( "<strong>" + data + "</strong>");
+			}
+		}
+	});
+};
+
+// form for support of existing comment - submit calls this
+BRS.support = function( id ) {
+
+	// send data to server
+	$.ajax({
+		url: "pinc/sub_sup.php",
+		data: {
+			name: $('#sup_name').val(),
+			comment: $('#sup_com').val(),
+			id: id
+		},
+		success: function( data ) {
+			if ( data == "Success!" ) {
+				// close the popup window
+				BRS.map.closePopup();
+
+				// reload map features and comments
+				BRS.remove_features();
+				BRS.get_list();
+			} else {
+				$( "#warn" ).html( "<strong>" + data + "</strong>");
+			}
+		}
+	});
+};
+
+// show/hide zoom warning message
+BRS.zoomLock = function( e ) {
+	if ( BRS.map.getZoom() === 18 ) {
+		// enable editing buttons
+		$('#zoom_in_text').hide();
+		$('#action_buttons').show();
+	} else {
+		// hide editing buttons
+		$('#zoom_in_text').show();
+		$('#action_buttons').hide();
+		BRS.set_mode('map');
+	}
+};
+
+// convert different shape objects to string format
+BRS.coords_to_string = function( c , sep) {
+	var i, build_up = '';
+
+	// check if this object has lat and long
+	if ( c.lat && c.lng ) {
+		// marker
+		return( c.lat + sep + c.lng);
+	}
+
+	// go through each latlng object in array and extract lat/lng as strings (recursively)
+	for ( i = 0; i < c.length; i = i + 1 ) {
+		build_up += BRS.coords_to_string( c[i], sep ) + ' ';
+	}
+	// return coords without last space
+	return( build_up.trim() );
+};
+
+window.onload = BRS.init;
+
+</script>
+</body>
+</html>

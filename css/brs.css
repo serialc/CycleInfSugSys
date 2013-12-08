@@ -1,0 +1,163 @@
+html, body, #cont {
+	font-family: "Roboto","Helvetica Neue",Helvetica,sans-serif;
+	padding: 0px;
+	margin: 0px;
+	height: 100%;
+	min-width: 450px;
+}
+
+/* major sections */
+#head {
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-size: 1.2em;
+	padding: 12px 10px 8px 10px;
+	width: 100%;
+	min-width: 450px;
+	z-index: 2;
+	background-color: rgba(255, 255, 255, 0.7);
+	-moz-box-shadow: 10px 10px 5px #888;
+	-webkit-box-shadow: 10px 10px 5px #888;
+	box-shadow: 0 5px 5px rgba(0,0,0, 0.3);
+}
+
+#map {
+	width: 100%;
+	min-width: 200px;
+	height: 100%;
+}
+
+#info {
+	display: none;
+	position: absolute;
+	top: 60px;
+	right: 0;
+	width: 20%;
+	max-width: 400px;
+	min-width: 200px;
+	height: 100%;
+	background-color: rgba(100,150,100,0.5);
+}
+
+#action_buttons, #zoom_in_text {
+	font-size: 0.9em;
+	line-height: 2.8em;
+	margin: 0 15px;
+}
+
+#zoom_in_text {
+	color: #777;
+}
+
+#action_buttons {
+	display: none;
+}
+
+span .acbut {
+	width: 170px;
+	white-space: nowrap;
+	text-align: center;
+	background-color: rgba(255, 128, 0, 0.5);
+	border: solid 1px rgba(0,0,0, 0.25);
+	margin: 0 5px;
+	padding: 5px;
+	cursor: pointer;
+	-moz-border-radius: 3px;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+}
+span .acbut:hover {
+	background-color: rgba(255, 128, 0, 0.8);
+}
+span .button_active {
+	background-color: rgba(11, 191, 0, 0.5);
+}
+span .button_active:hover {
+	background-color: rgba(11, 191, 0, 0.8);
+}
+
+/* generic tags */
+p {
+	margin: 0px;
+	padding: 5px;
+}
+
+h3 {
+	background-color: rgba(128, 175, 128, 0.4);
+	font-size: 1.5em;
+	padding: 5px;
+	min-width: 250px;
+}
+
+h3 img {
+	width: 23px;
+	float: right;
+	cursor: pointer; 
+	margin:0px;
+}
+
+h3 img:hover {
+	width: 27px;
+	margin: -2px;
+}
+
+h3 img:active {
+	width: 29px;
+	margin: -3px;
+}
+
+/* minor classes and ids */
+.mint {
+	color: #666;
+	font-size: 0.8em;
+}
+
+.hips {
+	margin: 0 5px;
+}
+
+#warn {
+	background-color: #ffa;
+	margin: 0 0 2px -5px;
+	padding-left: 5px;
+	line-height: 1.2em;
+}
+
+textarea {
+	height: 4em;
+}
+
+/* form layout */
+.leaflet-popup-content form {
+	padding: 5px;
+	height: 150px;
+	min-width: 250px;
+	font-size: 1.1em;
+}
+
+.leaflet-popup-content form p {
+	line-height: 1.4em;
+	padding: 0px;
+}
+.leaflet-popup-content .ialign {
+	left: 100px;
+	position: absolute;
+}
+.leaflet-popup-content input[type="button"] {
+	height: 30px;
+}
+
+.leaflet-popup-content #brloc_cap {
+	width: 20px;
+}
+
+/* leaflet over-ride */
+.leaflet-top {
+	top: 65px;
+}
+
+.leaflet-popup-content p {
+	margin: 0px 30px 10px 5px;
+	font-size: 1em;
+}
