@@ -250,10 +250,10 @@ BRS.get_list = function() {
 					BRS.features.push(L.marker(coords[0].split(',')).bindPopup(title + cmts_string + support_form).addTo(BRS.map));
 				}
 				if ( com['feature'] === 'polyline' ) {
-					BRS.features.push(L.polyline(llarray, {weight: 8}).bindPopup(title + cmts_string).addTo(BRS.map));
+					BRS.features.push(L.polyline(llarray, {weight: 8}).bindPopup(title + cmts_string + support_form).addTo(BRS.map));
 				}
 				if ( com['feature'] === 'polygon' ) {
-					BRS.features.push(L.polygon(llarray, {weight: 8}).bindPopup(title + cmts_string).addTo(BRS.map));
+					BRS.features.push(L.polygon(llarray, {weight: 8}).bindPopup(title + cmts_string + support_form).addTo(BRS.map));
 				}
 			}
 		}
