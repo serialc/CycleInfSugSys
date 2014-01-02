@@ -8,8 +8,9 @@ $DEBUG = false;
 
 # get the varaibles and sanitize them
 $name = preg_replace("/[^a-zA-Z\s]/", '', $_GET['name'] );
+$title = preg_replace("/[^a-zA-Z\s]/", '', $_GET['title'] );
 $comment = preg_replace("/[^a-zA-Z0-9\.!?\-\s]/", '', $_GET['comment'] );
-$comment_type = preg_replace("/[^a-z]/", '', $_GET['comment_type'] );
+$category = preg_replace("/[^a-z,]/", '', $_GET['category'] );
 $feature = preg_replace("/[^a-z]/", '', $_GET['feature'] );
 $id = preg_replace("/[^0-9\.\_]/", '', $_GET['id'] );
 $coords = preg_replace("/[^0-9\.\-\s,]/", '', $_GET['coords'] );
@@ -17,9 +18,11 @@ $coords = preg_replace("/[^0-9\.\-\s,]/", '', $_GET['coords'] );
 if ( $DEBUG ) {
 	print($name);
 	print('<br>');
+	print($title);
+	print('<br>');
 	print($comment);
 	print('<br>');
-	print($comment_type);
+	print($category);
 	print('<br>');
 	print($feature);
 	print('<br>');
@@ -36,8 +39,16 @@ if ( $name == '' ) {
 	$errors .= "Please provide your name.<br>\n";
 }
 
+if ( $title == '' ) {
+	$errors .= "Please provide a title.<br>\n";
+}
+
 if ( $comment == '' ) {
 	$errors .= "Please provide a comment.<br>\n";
+}
+
+if ( $category == '' ) {
+	$errors .= "Please provide at lease one cateogry.<br>\n";
 }
 
 // check if there were any errors and if so, return message and quit/return
@@ -52,8 +63,9 @@ if ( $errors != '' ) {
 include('data_handler.php');
 
 if ( $dh->add_feature(array("name" => $name,
+							"title" => $title,
 							"com" => $comment,
-							"com_type" => $comment_type,
+							"category" => $category,
 							"feature" => $feature,
 							"id" => $id,
 							"coords" => $coords)) ) {

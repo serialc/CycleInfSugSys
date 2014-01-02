@@ -1,9 +1,9 @@
-html, body, #cont {
+html, body, #cont, #footer {
 	font-family: "Roboto","Helvetica Neue",Helvetica,sans-serif;
 	padding: 0px;
 	margin: 0px;
 	height: 100%;
-	min-width: 450px;
+	min-width: 1000px;
 }
 
 /* major sections */
@@ -12,14 +12,68 @@ html, body, #cont {
 	top: 0;
 	left: 0;
 	font-size: 1.2em;
-	padding: 12px 10px 8px 10px;
 	width: 100%;
 	min-width: 450px;
 	z-index: 2;
 	background-color: rgba(255, 255, 255, 0.7);
-	-moz-box-shadow: 10px 10px 5px #888;
-	-webkit-box-shadow: 10px 10px 5px #888;
-	box-shadow: 0 5px 5px rgba(0,0,0, 0.3);
+	-moz-box-shadow: 0 2px 5px #888;
+	-webkit-box-shadow: 0 2px 5px #888;
+	box-shadow: 0 2px 5px rgba(0,0,0, 0.3);
+}
+
+#head span {
+	padding: 3px 10px;
+}
+
+#footer {
+	position: absolute;
+	overflow:scroll;
+	left: 0;
+	width: 100%;
+	height: 23px;
+	bottom: 0;
+	z-index: 2;
+	background-color: rgba(255, 255, 255, 0.7);
+	-moz-box-shadow: 0 -2px 5px #888;
+	-webkit-box-shadow: 0 -2px 5px #888;
+	box-shadow: 0 -2px 5px rgba(0,0,0, 0.3);
+}
+
+#fclosed, #fopened {
+	text-align: center;
+	line-height: 1.4em;
+	color: #777;
+	height: 23px;
+}
+
+#fclosed:hover, #fopened:hover {
+	color: black;
+	cursor: pointer;
+}
+
+#sel_options, #table_view {
+	display: inline-table;
+	width: 48%;
+	margin: 0 0 0 1%;
+	height: 100%;
+	overflow: scroll;
+}
+
+#sel_options_cont, #table_view_cont {
+	width: 100%;
+	overflow: scroll;
+	height: 250px;
+}
+
+#sel_options_cont {
+	height: 220px;
+}
+
+#table_view_cont span {
+	padding-left: 2px;
+}
+#table_view_cont > span:nth-child(odd) {
+	background-color: #aab;
 }
 
 #map {
@@ -28,26 +82,14 @@ html, body, #cont {
 	height: 100%;
 }
 
-#info {
-	display: none;
-	position: absolute;
-	top: 60px;
-	right: 0;
-	width: 20%;
-	max-width: 400px;
-	min-width: 200px;
-	height: 100%;
-	background-color: rgba(100,150,100,0.5);
-}
-
 #action_buttons, #zoom_in_text {
 	font-size: 0.9em;
 	line-height: 2.8em;
-	margin: 0 15px;
+	margin: 0 20px;
 }
 
 #zoom_in_text {
-	color: #777;
+	color: #b33;
 }
 
 #action_buttons {
@@ -77,10 +119,49 @@ span .button_active:hover {
 	background-color: rgba(11, 191, 0, 0.8);
 }
 
+/* footer styling */
+span.table_feature {
+	display: block;
+	background-color: #aaa;
+	padding: 1px;
+	margin: 2px 0;
+}
+span.table_feature span {
+	color: white;
+	font-size: 0.8em;
+	font-weight: 400;
+	float: right;
+	margin: 0 1px;
+	text-align: center;
+	width: 20px;
+	height: 20px;
+	line-height: 1.4em;
+}
+span.table_feature div {
+	display: inline;
+}
+span.table_feature span img {
+	cursor: pointer;
+	padding-top: 2px;
+	height: 16px;
+}
+span.table_feature span img:hover {
+	padding-top: 0px;
+	height: 20px;
+}
 /* generic tags */
 p {
 	margin: 0px;
 	padding: 5px;
+}
+
+h4 {
+	font-size: 0.9em;
+	background-color: #777777;
+	color: #FFFFFF;
+	margin: 0;
+	padding: 3px;
+	
 }
 
 h3 {
@@ -88,6 +169,7 @@ h3 {
 	font-size: 1.5em;
 	padding: 5px;
 	min-width: 250px;
+	margin-bottom: 0px;
 }
 
 h3 img {
@@ -116,6 +198,10 @@ h3 img:active {
 .hips {
 	margin: 0 5px;
 }
+.cmnt_symb {
+	background: url('../imgs/comment.png') no-repeat 1px 2px;
+	background-size: 18px 18px;
+}
 
 #warn {
 	background-color: #ffa;
@@ -131,7 +217,6 @@ textarea {
 /* form layout */
 .leaflet-popup-content form {
 	padding: 5px;
-	height: 150px;
 	min-width: 250px;
 	font-size: 1.1em;
 }
@@ -154,10 +239,11 @@ textarea {
 
 /* leaflet over-ride */
 .leaflet-top {
-	top: 65px;
+	top: 60px;
 }
 
 .leaflet-popup-content p {
-	margin: 0px 30px 10px 5px;
+	margin: 5px 0 10px 0;
 	font-size: 1em;
+	padding: 0px;
 }
