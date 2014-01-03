@@ -35,6 +35,7 @@
 					<div id="sel_options_cont">
 						this is where we show/hide categories, search by text
 					</div>
+					<p>Issues: Large/complex feautres do not save.</p>
 					<p>Download all features and comments <a href='data/coms.json'>data</a>.</p>
 				</div>
 				<div id="table_view">
@@ -43,7 +44,6 @@
 						show table with relevant info, updated based on selections
 					</div>
 				</div>
-
 			</div>
 		</div>
 	 
@@ -51,9 +51,15 @@
 			 
 // create the global object holding everything for BRS
 var BRS = {mode: 'map',
+	config: { zoom_edit_level: 18,
+		initial_zoom_level: 12,
+		lowest_zoom_val: 12,
+		area_locked: true,
+		bounds: new L.LatLngBounds(new L.LatLng(49.56107, 6.06943), new L.LatLng(49.6554, 6.20316)), // sw corner, ne corner
+		center: new L.LatLng(53.75, -0.333333) },
 	categs: { accid: "Accident",
 		infr: "Infrastructure",
-		maint: "Mainenance",
+		maint: "Maintenance",
 		near: "Near-miss accident",
 		safe: "Safety"},
 	mapped_features: [],
@@ -62,24 +68,25 @@ var BRS = {mode: 'map',
 // display base map and markers
 BRS.init = function() {
 	// define variables
-	var bounds = new L.LatLngBounds(new L.LatLng(49.56107, 6.06943), new L.LatLng(49.6554, 6.20316)), // sw corner, ne corner
-		osm_path = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+	var osm_path = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
 		osm_attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-		osm = new L.TileLayer(osm_path, {minZoom: 12, attribution: osm_attribution});
+		osm = new L.TileLayer(osm_path, {minZoom: BRS.config.lowest_zoom_val, attribution: osm_attribution});
 		ocm_path = 'http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png',
 		ocm_attribution = '&copy <a href="http://www.opencyclemap.org/">OpenCycleMap</a>,', 
-		ocm = new L.TileLayer(ocm_path, {minZoom: 12, attribution: ocm_attribution});
+		ocm = new L.TileLayer(ocm_path, {minZoom: BRS.config.lowest_zoom_val, attribution: ocm_attribution});
 
 	// create the map
 	BRS.map = L.map('map', {
-		center: bounds.getCenter(),
+		center: BRS.config.center,
 		attributionControl: false,
-		zoom: 12,
-		// don't want to load both layers simultaneously, only on demand
-		//layers: [ocm, osm],
-		layers: [osm],
-		maxBounds: bounds
+		zoom: BRS.config.initial_zoom_level,
+		layers: [osm]
 	})
+
+	// lock the map to a fixed area if requested
+	if ( BRS.config.area_locked ) {
+		BRS.map.setMaxBounds( BRS.config.bounds );
+	}
 
 	var baseMaps = {
 		"Open Cycle Map": ocm,
@@ -483,6 +490,7 @@ BRS.comment = function( latlng_id, coordinates ) {
 	// send data
 	$.ajax({
 		url: "pinc/sub_com.php",
+		type: "POST",
 		data: {
 			name: $('#sug_name').val(),
 			title: $('#sug_title').val(),
@@ -538,7 +546,7 @@ BRS.support = function( id ) {
 
 // show/hide zoom warning message
 BRS.zoomLock = function( e ) {
-	if ( BRS.map.getZoom() === 18 ) {
+	if ( BRS.map.getZoom() >= BRS.config.zoom_edit_level ) {
 		// enable editing buttons
 		$('#zoom_in_text').hide();
 		$('#action_buttons').show();

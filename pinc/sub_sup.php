@@ -8,7 +8,7 @@ $DEBUG = false;
 
 # get the varaibles and sanitize them
 $name = preg_replace("/[^a-zA-Z\s]/", '', $_GET['name'] );
-$comment = preg_replace("/[^a-zA-Z0-9\.!?\-\s]/", '', $_GET['comment'] );
+$comment = preg_replace("/[^a-zA-Z0-9\.!?\-\s\+]/", '', $_GET['comment'] );
 $id = preg_replace("/[^0-9\.\_]/", '', $_GET['id'] );
 
 if ( $DEBUG ) {

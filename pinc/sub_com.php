@@ -7,13 +7,13 @@ date_default_timezone_set('CET');
 $DEBUG = false;
 
 # get the varaibles and sanitize them
-$name = preg_replace("/[^a-zA-Z\s]/", '', $_GET['name'] );
-$title = preg_replace("/[^a-zA-Z\s]/", '', $_GET['title'] );
-$comment = preg_replace("/[^a-zA-Z0-9\.!?\-\s]/", '', $_GET['comment'] );
-$category = preg_replace("/[^a-z,]/", '', $_GET['category'] );
-$feature = preg_replace("/[^a-z]/", '', $_GET['feature'] );
-$id = preg_replace("/[^0-9\.\_]/", '', $_GET['id'] );
-$coords = preg_replace("/[^0-9\.\-\s,]/", '', $_GET['coords'] );
+$name = preg_replace("/[^a-zA-Z0-9\s]/", '', $_POST['name'] );
+$title = preg_replace("/[^a-zA-Z0-9\-\(\),\s]/", '', $_POST['title'] );
+$comment = preg_replace("/[^a-zA-Z0-9\(\),\.!\?\-\s\+]/", '', $_POST['comment'] );
+$category = preg_replace("/[^a-z\_]/", '', $_POST['category'] );
+$feature = preg_replace("/[^a-z]/", '', $_POST['feature'] );
+$id = preg_replace("/[^0-9\.\_]/", '', $_POST['id'] );
+$coords = preg_replace("/[^0-9\.\-\s,]/", '', $_POST['coords'] );
 
 if ( $DEBUG ) {
 	print($name);

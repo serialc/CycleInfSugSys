@@ -27,7 +27,6 @@ html, body, #cont, #footer {
 
 #footer {
 	position: absolute;
-	overflow:scroll;
 	left: 0;
 	width: 100%;
 	height: 23px;
