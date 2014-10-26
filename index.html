@@ -17,11 +17,13 @@
 	<body>
 		<div id='head'><span>Cycling infrastructure suggestion system</span>
 			<span id='action_buttons'>
-				<span class='acbut' id='acbut_point' onclick='BRS.set_mode("point");'>Create point feature</span>
-				<span class='acbut' id='acbut_line' onclick='BRS.set_mode("line");'>Create line feature</span>
-				<span class='acbut' id='acbut_poly' onclick='BRS.set_mode("poly");'>Create area feature</span>
+				<span>Create:</span>
+				<span class='acbut' id='acbut_point' onclick='BRS.set_mode("point");'>point</span>
+				<span class='acbut' id='acbut_line' onclick='BRS.set_mode("line");'>line</span>
+				<span class='acbut' id='acbut_poly' onclick='BRS.set_mode("poly");'>area</span>
 			</span>
 			<span id='zoom_in_text'>[Zoom in to add features]</span>
+			<span id='datadl' class='acbut'><a href='data/coms.json'>Download data</a></span>
 		</div>
 		<div id='cont'>
 			<div id="map"></div>
@@ -35,10 +37,6 @@
 					<div id="sel_options_cont">
 						this is where we show/hide categories, search by text
 					</div>
-					<p>Remove main JS code to external file..</p>
-					<p>Add colours to markers?</p>
-					<p>Add ability to add/delete marker details.</p>
-					<p>Download all features and comments <a href='data/coms.json'>data</a>.</p>
 				</div>
 				<div id="table_view">
 					<h4>Features</h4>
@@ -52,7 +50,7 @@
 			 
 // create the global object holding everything for BRS
 var BRS = {mode: 'map',
-	config: { zoom_edit_level: 18,
+	config: { zoom_edit_level: 17,
 		initial_zoom_level: 12,
 		lowest_zoom_val: 12,
 		area_locked: true,
@@ -62,9 +60,8 @@ var BRS = {mode: 'map',
 		infr: "Infrastructure",
 		maint: "Maintenance",
 		near: "Near-miss accident",
-		safe: "Safety"},
-	mapped_features: [],
-	features: []};
+		safe: "Safety"}
+	};
 </script>
 <script src="js/brs.js"></script>
 </body>

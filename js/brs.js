@@ -3,12 +3,16 @@
 
 // display base map and markers
 BRS.init = function() {
+	// create global map object lists
+	BRS.mapped_features = [];
+	BRS.features = [];
+
 	// define variables
 	var osm_path = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
 		osm_attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
 		osm = new L.TileLayer(osm_path, {minZoom: BRS.config.lowest_zoom_val, attribution: osm_attribution});
 		ocm_path = 'http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png',
-		ocm_attribution = '&copy <a href="http://www.opencyclemap.org/">OpenCycleMap</a>,', 
+		ocm_attribution = '&copy <a href="http://www.opencyclemap.org/">OpenCycleMap</a> - <a href="http://www.opencyclemap.org/docs/">Legend</a>,', 
 		ocm = new L.TileLayer(ocm_path, {minZoom: BRS.config.lowest_zoom_val, attribution: ocm_attribution});
 
 	// create the map
