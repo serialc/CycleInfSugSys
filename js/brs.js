@@ -165,7 +165,7 @@ BRS.get_list = function( initialization_bool ) {
 		url_dict, url_parts, url_part,
 		f_num;
 
-	// get list of suggested locations
+	// get list of features
 	$.ajax({
 		url: "data/coms.json",
 		cache: false,
