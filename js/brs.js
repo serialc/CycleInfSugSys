@@ -35,6 +35,8 @@ BRS.init = function() {
 
 	// add attribution 'control' to map
 	L.control.attribution({position: 'topright'}).addAttribution(osm_attribution).addTo(BRS.map);
+	// add scale bar
+	L.control.scale({position: 'topright', imperial: false, maxWidth: 200}).addTo(BRS.map);
 	// add basemap controls to map
 	L.control.layers(baseMaps, null, {position: 'topright'}).addTo(BRS.map);
 

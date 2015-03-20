@@ -3,6 +3,7 @@
 class datah {
 	
 	# define private/public attributes here
+	private $passwd = '';
 	private $coms = 'uninitialized';
 	private $data_path = '../data/coms.json';
 
@@ -39,7 +40,7 @@ class datah {
 		$fh = fopen($this->data_path, 'w');
 		# check if there were problems writing to the file
 		if ( !fwrite($fh, json_encode($this->coms)) ) {
-			print('Unable to write to disk');
+			print('<strong>Unable to write to disk!</strong>');
 		}
 
 		fclose($fh);
@@ -67,6 +68,21 @@ class datah {
 
 		return false;
 	}
+
+	# rem a feature
+	public function rem_feature($fid, $sid, $sub_passwd) {
+		# NOT IMPLEMENTED AND NOT FINISHED
+
+		# check that passwd is defined and that matches
+		if($this->passwd != '' && $this->passwd == $sub_passwd) {
+			# get fid, remove sid and submit for file update
+
+		} else {
+			# password failure
+			return('PWF');
+		}
+	}
+	
 
 	# add a supportive comment to a feature
 	public function add_support( $support_array ) {
