@@ -10,22 +10,23 @@ BRS.init = function() {
 	// define variables
 	var osm_path = 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
 		osm_attribution = '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-		osm = new L.TileLayer(osm_path, {minZoom: BRS.config.lowest_zoom_val, attribution: osm_attribution});
+		osm = new L.TileLayer(osm_path, {attribution: osm_attribution});
 		ocm_path = 'http://{s}.tile.opencyclemap.org/cycle/{z}/{x}/{y}.png',
 		ocm_attribution = '&copy <a href="http://www.opencyclemap.org/">OpenCycleMap</a> - <a href="http://www.opencyclemap.org/docs/">Legend</a>,', 
-		ocm = new L.TileLayer(ocm_path, {minZoom: BRS.config.lowest_zoom_val, attribution: ocm_attribution});
+		ocm = new L.TileLayer(ocm_path, {attribution: ocm_attribution});
 
 	// create the map
 	BRS.map = L.map('map', {
 		center: BRS.config.center,
 		attributionControl: false,
 		zoom: BRS.config.initial_zoom_level,
+        minZoom: BRS.config.lowest_zoom_val,
 		layers: [osm]
 	})
 
 	// lock the map to a fixed area if requested
 	if ( BRS.config.area_locked ) {
-		BRS.map.setMaxBounds( BRS.config.bounds );
+		//BRS.map.setMaxBounds( BRS.config.bounds );
 	}
 
 	var baseMaps = {

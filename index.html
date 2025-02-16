@@ -10,9 +10,6 @@
 		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.css" />
 		<link rel="stylesheet" href="css/leaflet.draw.css" />
 		<link rel="stylesheet" href="css/brs.css" />
-		<!--[if lte IE 8]>
-		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.6.2/leaflet.ie.css" />
-		<![endif]-->
 	</head>
 	<body>
 		<div id='head'><span>Cycling infrastructure suggestions system</span>
@@ -50,17 +47,19 @@
 			 
 // create the global object holding everything for BRS
 var BRS = {mode: 'map',
-	config: { zoom_edit_level: 17,
-		initial_zoom_level: 12,
-		lowest_zoom_val: 12,
-		area_locked: true,
-		bounds: new L.LatLngBounds(new L.LatLng(49.56107, 6.06943), new L.LatLng(49.6554, 6.20316)), // sw corner, ne corner
-		center: new L.LatLng(53.75, -0.333333) },
-	categs: { accid: "Accident",
-		infr: "Infrastructure",
-		maint: "Maintenance",
-		near: "Near-miss accident",
-		safe: "Safety"}
+	config: { zoom_edit_level: 10,
+		initial_zoom_level: 8,
+		lowest_zoom_val: 7,
+		area_locked: false,
+		bounds: new L.LatLngBounds(new L.LatLng(49, 3), new L.LatLng(55, 8)), // sw corner, ne corner
+		center: new L.LatLng(51, 5) },
+	categs: { 
+        cycling: "Cycle path",
+        hotel: "Hotel stop",
+		start: "Start of trip",
+		end: "End of trip",
+		poi: "Point of interest",
+		other: "Other"}
 	};
 </script>
 <script src="js/brs.js"></script>

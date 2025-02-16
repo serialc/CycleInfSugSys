@@ -21,7 +21,7 @@ class datah {
 		return $this->coms;
 	}
 
-	# chack if a comment at these coords already exists, return true/false
+	# check if a comment at these coords already exists, return true/false
 	private function comment_id_exists( $id ) {
 		# iterate through comments
 		foreach ( $this->coms['cycling_comments'] as $com ) {
@@ -39,7 +39,7 @@ class datah {
 		# open, write to file, close
 		$fh = fopen($this->data_path, 'w');
 		# check if there were problems writing to the file
-		if ( !fwrite($fh, json_encode($this->coms)) ) {
+		if ( $fh == False or !fwrite($fh, json_encode($this->coms)) ) {
 			print('<strong>Unable to write to disk!</strong>');
 		}
 
